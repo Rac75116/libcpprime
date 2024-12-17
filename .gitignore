@@ -1,1 +1,4 @@
 .vscode
+.clang-format
+**.exe
+**.cpp
