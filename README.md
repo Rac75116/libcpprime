@@ -7,7 +7,7 @@ This library can determine the primality of up to **10^6** 64-bit integers or **
 # Usage
 
 ```cpp
-#include <libcpprime/IsPrime>
+#include <libcpprime/IsPrime.hpp>
 #include <cassert>
 int main() {
     assert(cppr::IsPrime(998244353) == true);
