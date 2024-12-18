@@ -1,7 +1,11 @@
-#include <type_traits>
 #include <cstdint>
-#if __has_include(<bit>)
+#if __cplusplus >= 201701U
+#if __has_include("type_traits")
+#include <type_traits>
+#endif
+#if __has_include("bit")
 #include <bit>
+#endif
 #endif
 #ifdef _MSC_VER
 #include <intrin.h>
@@ -27,17 +31,16 @@ namespace internal {
     };
     LIBCPPRIME_CONSTEXPR void Assume(const bool f) {
 #ifdef __cpp_lib_is_constant_evaluated
-        if (std::is_constant_evaluated())
+        if (std::is_constant_evaluated()) return;
 #endif
-            return;
-#if defined __clang__
+#if defined(__clang__)
+#if __has_builtin(__builtin_assume)
         __builtin_assume(f);
-#elif defined __GNUC__
+#endif
+#elif defined(__GNUC__)
         if (!f) __builtin_unreachable();
-#elif _MSC_VER
+#elif defined(_MSC_VER)
         __assume(f);
-#else
-        if (!f) Unreachable();
 #endif
     }
     LIBCPPRIME_CONSTEXPR std::int32_t CountrZero(std::uint64_t n) {
@@ -264,7 +267,7 @@ namespace internal {
         const std::int32_t S = CountrZero(x - 1);
         const std::uint64_t D = (x - 1) >> S;
         const auto one = mint.one(), mone = mint.neg(one);
-        auto test2 = [&](std::uint64_t base1, std::uint64_t base2) {
+        auto test2 = [&](std::uint64_t base1, std::uint64_t base2) -> bool {
             auto a = one, b = one;
             auto c = mint.build(base1), d = mint.build(base2);
             std::uint64_t ex = D;
@@ -285,7 +288,7 @@ namespace internal {
             }
             return true;
         };
-        auto test3 = [&](std::uint64_t base1, std::uint64_t base2, std::uint64_t base3) {
+        auto test3 = [&](std::uint64_t base1, std::uint64_t base2, std::uint64_t base3) -> bool {
             auto a = one, b = one, c = one;
             auto d = mint.build(base1), e = mint.build(base2), f = mint.build(base3);
             std::uint64_t ex = D;
@@ -307,7 +310,7 @@ namespace internal {
             }
             return true;
         };
-        auto test4 = [&](std::uint64_t base1, std::uint64_t base2, std::uint64_t base3, std::uint64_t base4) {
+        auto test4 = [&](std::uint64_t base1, std::uint64_t base2, std::uint64_t base3, std::uint64_t base4) -> bool {
             auto a = one, b = one, c = one, d = one;
             auto e = mint.build(base1), f = mint.build(base2), g = mint.build(base3), h = mint.build(base4);
             std::uint64_t ex = D;
