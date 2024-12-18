@@ -25,6 +25,18 @@ int main() {
 }
 ```
 
+```cpp
+#define LIBCPPRIME_NO_HUGE_TABLE
+#include <libcpprime/IsPrime.hpp>
+#undef LIBCPPRIME_NO_HUGE_TABLE
+#include <libcpprime/IsPrime.hpp>
+#include <cassert>
+int main() {
+    assert(cppr::with_huge_table::IsPrime(67280421310721));
+    assert(cppr::no_huge_table::IsPrime(67280421310721));
+}
+```
+
 # Requirements
 
 - C++11 (To use it as a constexpr function, C++20 is required.)
@@ -49,5 +61,9 @@ If you define `LIBCPPRIME_NO_HUGE_TABLE`:
 
 # Releases
 
-- 2024/12/18 ver 1.0.0
+- 2024/12/18 ver 1.1.1
+  - Add include guards
 - 2024/12/18 ver 1.1.0
+  - Add `IsPrime` with a table
+- 2024/12/18 ver 1.0.0
+  - Add `IsPrime`
