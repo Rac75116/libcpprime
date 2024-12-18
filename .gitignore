@@ -1,4 +1,3 @@
 .vscode
 .clang-format
-**.exe
-**.cpp
+Test
