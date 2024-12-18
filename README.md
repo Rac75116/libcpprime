@@ -13,6 +13,18 @@ int main() {
 }
 ```
 
+This library uses a 36KB table for performance optimization.
+If you want to reduce the size of the executable file, define `LIBCPPRIME_NO_HUGE_TABLE` before including the library.
+
+```cpp
+#define LIBCPPRIME_NO_HUGE_TABLE // <==
+#include <libcpprime/IsPrime.hpp>
+#include <cassert>
+int main() {
+    assert(cppr::IsPrime(998244353) == true);
+}
+```
+
 # Requirements
 
 - C++11 (To use it as a constexpr function, C++20 is required.)
@@ -30,8 +42,12 @@ g++ -I ./libcpprime -O3 Main.cpp
 
 # Performance
 
+![IsPrimeWithTable.png](./README/IsPrimeWithTable.png)
+
+If you define `LIBCPPRIME_NO_HUGE_TABLE`:
 ![IsPrime.png](./README/IsPrime.png)
 
 # Releases
 
 - 2024/12/18 ver 1.0.0
+- 2024/12/18 ver 1.1.0
