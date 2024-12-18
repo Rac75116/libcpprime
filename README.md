@@ -31,3 +31,7 @@ g++ -I ./libcpprime -O3 Main.cpp
 # Performance
 
 ![IsPrime.png](./README/IsPrime.png)
+
+# Releases
+
+- 2024/12/18 ver 1.0.0
