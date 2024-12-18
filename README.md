@@ -2,8 +2,6 @@
 
 **libcpprime** is a fast C++ implementation of a primality test optimized for 64-bit integers.
 
-This library can determine the primality of up to **10^6** 64-bit integers or **10^7** 32-bit integers in 1 second.
-
 # Usage
 
 ```cpp
@@ -29,3 +27,7 @@ This library is header-only, so you only need to specify the include path.
 ```
 g++ -I ./libcpprime -O3 Main.cpp
 ```
+
+# Performance
+
+![IsPrime.png](./README/IsPrime.png)
