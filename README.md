@@ -4,6 +4,21 @@
 
 # Usage
 
+## <libcpprime/IsPrime.hpp>
+
+### `cppr::IsPrime()`
+
+```cpp
+namespace cppr {
+bool IsPrime(std::uint64_t n) noexcept; // C++11
+constexpr bool IsPrime(std::uint64_t n) noexcept; // C++20
+}
+```
+
+It returns true if the input value is a prime number; otherwise, it returns false.
+
+#### example
+
 ```cpp
 #include <libcpprime/IsPrime.hpp>
 #include <cassert>
@@ -13,35 +28,34 @@ int main() {
 }
 ```
 
-This library uses a 36KB table for performance optimization.
-If you want to reduce the size of the executable file, define `LIBCPPRIME_NO_HUGE_TABLE` before including the library.
+## <libcpprime/IsPrimeNoTable.hpp>
+
+### `cppr::IsPrimeNoTable`
 
 ```cpp
-#define LIBCPPRIME_NO_HUGE_TABLE // <==
-#include <libcpprime/IsPrime.hpp>
-#include <cassert>
-int main() {
-    assert(cppr::IsPrime(998244353) == true);
+namespace cppr {
+bool IsPrimeNoTable(std::uint64_t n) noexcept; // C++11
+constexpr bool IsPrimeNoTable(std::uint64_t n) noexcept; // C++20
 }
 ```
 
+It returns true if the input value is a prime number; otherwise, it returns false.
+If you want to reduce the size of the executable file, use this function instead of `cppr::IsPrime` because `cppr::IsPrime` uses a 36KB table for performance optimization.
+
+#### example
+
 ```cpp
-#define LIBCPPRIME_NO_HUGE_TABLE
-#include <libcpprime/IsPrime.hpp>
-#undef LIBCPPRIME_NO_HUGE_TABLE
-#include <libcpprime/IsPrime.hpp>
+#include <libcpprime/IsPrimeNoTable.hpp>
 #include <cassert>
 int main() {
-    assert(cppr::with_huge_table::IsPrime(67280421310721));
-    assert(cppr::no_huge_table::IsPrime(67280421310721));
+    assert(cppr::IsPrimeNoTable(998244353) == true);
+    assert(cppr::IsPrimeNoTable(999988224444335533) == false);
 }
 ```
 
 # Requirements
 
-- C++11 (To use it as a constexpr function, C++20 is required.)
-- gcc 4.7.1 or later
-- clang 3.1.0 or later
+- C++11
 - Any compiler that supports C++11
 
 # Compilation
@@ -54,18 +68,23 @@ g++ -I ./libcpprime -O3 Main.cpp
 
 # Performance
 
-![IsPrimeWithTable.png](./README/IsPrimeWithTable.png)
+### `cppr::IsPrime`
 
-If you define `LIBCPPRIME_NO_HUGE_TABLE`:
-![IsPrime.png](./README/IsPrime.png)
+<img src="./README/IsPrime.png" width="400">
+
+### `cppr::IsPrimeNoTable`
+
+<img src="./README/IsPrimeNoTable.png" width="400">
 
 # Releases
 
+- 2024/12/19 ver 1.2.0
+  - `cppr::IsPrime` is separated into `cppr::IsPrime` and `cppr::IsPrimeNoTable`
 - 2024/12/19 ver 1.1.2
   - Fix typo
 - 2024/12/18 ver 1.1.1
   - Add include guards
 - 2024/12/18 ver 1.1.0
-  - Add `IsPrime` with a table
+  - Add `cppr::IsPrime` with a table
 - 2024/12/18 ver 1.0.0
-  - Add `IsPrime`
+  - Add `cppr::IsPrime`
