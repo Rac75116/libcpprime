@@ -61,6 +61,8 @@ If you define `LIBCPPRIME_NO_HUGE_TABLE`:
 
 # Releases
 
+- 2024/12/19 ver 1.1.2
+  - Fix typo
 - 2024/12/18 ver 1.1.1
   - Add include guards
 - 2024/12/18 ver 1.1.0

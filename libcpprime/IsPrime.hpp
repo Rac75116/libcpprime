@@ -1,5 +1,5 @@
 /**
- * libprrime https://github.com/sortA0329/libcpprime
+ * libcpprime https://github.com/sortA0329/libcpprime
  * 
  * MIT License
  *
