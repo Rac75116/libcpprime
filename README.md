@@ -10,8 +10,8 @@
 
 ```cpp
 namespace cppr {
-bool IsPrime(std::uint64_t n) noexcept; // C++11
-constexpr bool IsPrime(std::uint64_t n) noexcept; // C++20
+    bool IsPrime(std::uint64_t n) noexcept; // C++11
+    constexpr bool IsPrime(std::uint64_t n) noexcept; // C++20
 }
 ```
 
@@ -34,8 +34,8 @@ int main() {
 
 ```cpp
 namespace cppr {
-bool IsPrimeNoTable(std::uint64_t n) noexcept; // C++11
-constexpr bool IsPrimeNoTable(std::uint64_t n) noexcept; // C++20
+    bool IsPrimeNoTable(std::uint64_t n) noexcept; // C++11
+    constexpr bool IsPrimeNoTable(std::uint64_t n) noexcept; // C++20
 }
 ```
 
@@ -78,8 +78,10 @@ g++ -I ./libcpprime -O3 Main.cpp
 
 # Releases
 
+- 2024/12/23 ver 1.2.1
+  - Improve performance
 - 2024/12/19 ver 1.2.0
-  - `cppr::IsPrime` is separated into `cppr::IsPrime` and `cppr::IsPrimeNoTable`
+  - Split `cppr::IsPrime` into `cppr::IsPrime` and `cppr::IsPrimeNoTable`
 - 2024/12/19 ver 1.1.2
   - Fix typo
 - 2024/12/18 ver 1.1.1
