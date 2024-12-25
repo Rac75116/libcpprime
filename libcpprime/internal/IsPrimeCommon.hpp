@@ -178,6 +178,24 @@ namespace internal {
         return { res, cur };
 #endif
     }
+    LIBCPPRIME_CONSTEXPR std::uint32_t GCD32(std::uint32_t x, std::uint32_t y) noexcept {
+        if (x == 0) return 0;
+        const std::int32_t n = CountrZero(x);
+        const std::int32_t m = CountrZero(y);
+        const std::int32_t l = n < m ? n : m;
+        x >>= n;
+        y >>= m;
+        while (x != y) {
+            const std::uint32_t a = y - x, b = x - y;
+            const std::int32_t m = CountrZero(a), n = CountrZero(b);
+            Assume(m == n);
+            const std::uint32_t s = y < x ? b : a;
+            const std::uint32_t t = x < y ? x : y;
+            x = s >> m;
+            y = t;
+        }
+        return x << l;
+    }
 
     template<bool Strict = false> class MontgomeryModint64Impl {
         std::uint64_t mod_ = 0, rs = 0, nr = 0, np = 0;
@@ -271,6 +289,11 @@ namespace internal {
 748,5003,9048,4679,1915,7652,9657,660,3054,15469,2910,775,14106,1749,136,2673,61814,5633,1244,2567,4989,1637,1273,11423,7974,7509,6061,531,6608,1088,1627,160,6416,11350,921,306,18117,1238,463,1722,996,3866,6576,6055,130,24080,7331,3922,8632,2706,24108,32374,4237,15302,287,2296,1220,20922,3350,2089,562,11745,163,11951 };
     // clang-format on
     LIBCPPRIME_CONSTEXPR bool IsPrime32(const std::uint32_t x) noexcept {
+        if (x < 39601) {
+            if (GCD32(Divu128(272518712866683587ull % x, 10755835586592736005ull, x).low, x) != 1) return false;
+            if (x < 11881) return true;
+            return GCD32(Divu128(827936745744686818ull % x, 10132550402535125089ull, x).low, x) == 1;
+        }
         const std::uint32_t h = x * 0xad625b89;
         std::uint32_t d = x - 1;
         std::uint32_t pw = static_cast<std::uint32_t>(Bases[h >> 24]);

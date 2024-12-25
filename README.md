@@ -1,6 +1,6 @@
 # libcpprime
 
-**libcpprime** is a fast C++ implementation of a primality test optimized for 64-bit integers.
+**libcpprime** is a efficient C++ implementation of a primality test optimized for 64-bit integers.
 
 # Usage
 
@@ -78,6 +78,8 @@ g++ -I ./libcpprime -O3 Main.cpp
 
 # Releases
 
+- 2024/12/25 ver 1.2.2
+  - Improve performance
 - 2024/12/23 ver 1.2.1
   - Improve performance
 - 2024/12/19 ver 1.2.0
