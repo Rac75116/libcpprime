@@ -289,10 +289,17 @@ namespace internal {
 748,5003,9048,4679,1915,7652,9657,660,3054,15469,2910,775,14106,1749,136,2673,61814,5633,1244,2567,4989,1637,1273,11423,7974,7509,6061,531,6608,1088,1627,160,6416,11350,921,306,18117,1238,463,1722,996,3866,6576,6055,130,24080,7331,3922,8632,2706,24108,32374,4237,15302,287,2296,1220,20922,3350,2089,562,11745,163,11951 };
     // clang-format on
     LIBCPPRIME_CONSTEXPR bool IsPrime32(const std::uint32_t x) noexcept {
-        if (x < 39601) {
-            if (GCD32(Divu128(272518712866683587ull % x, 10755835586592736005ull, x).low, x) != 1) return false;
-            if (x < 11881) return true;
-            return GCD32(Divu128(827936745744686818ull % x, 10132550402535125089ull, x).low, x) == 1;
+        if (x < 218089) {
+            const std::uint32_t a = Divu128(272518712866683587ull % x, 10755835586592736005ull, x).low;
+            if (x < 11881) return GCD32(a, x) == 1;
+            const std::uint32_t b = Divu128(827936745744686818ull % x, 10132550402535125089ull, x).low;
+            if (x < 39601) return GCD32((a * b) % x, x) == 1;
+            const std::uint32_t c = Divu128(9647383993136055606ull % x, 17068348107132031867ull, x).low;
+            if (x < 85849) return GCD32(std::uint64_t(a) * b * c % x, x) == 1;
+            const std::uint32_t d = Divu128(5118528107581154032ull % x, 7251394891134766417ull, x).low;
+            if (x < 151321) return GCD32((std::uint64_t(a) * b % x) * (std::uint64_t(c) * d % x) % x, x) == 1;
+            const std::uint32_t e = Divu128(385001175472415285ull % x, 586477103009887527ull, x).low;
+            return GCD32((std::uint64_t(a) * b * c % x) * (std::uint64_t(d) * e % x) % x, x) == 1;
         }
         const std::uint32_t h = x * 0xad625b89;
         std::uint32_t d = x - 1;
