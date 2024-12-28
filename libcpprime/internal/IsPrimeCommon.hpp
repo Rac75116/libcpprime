@@ -232,7 +232,7 @@ namespace internal {
             mod_ = n;
             rs = Divu128(0xffffffffffffffff % n, 0 - n, n).low;
             nr = n;
-            for (std::uint32_t i = 0; i != 6; ++i) nr *= 2 - n * nr;
+            for (std::uint32_t i = 0; i != 5; ++i) nr *= 2 - n * nr;
             if LIBCPPRIME_IF_CONSTEXPR (Strict) nr = 0 - nr;
             np = reduce(rs);
         }
@@ -289,31 +289,40 @@ namespace internal {
 748,5003,9048,4679,1915,7652,9657,660,3054,15469,2910,775,14106,1749,136,2673,61814,5633,1244,2567,4989,1637,1273,11423,7974,7509,6061,531,6608,1088,1627,160,6416,11350,921,306,18117,1238,463,1722,996,3866,6576,6055,130,24080,7331,3922,8632,2706,24108,32374,4237,15302,287,2296,1220,20922,3350,2089,562,11745,163,11951 };
     // clang-format on
     LIBCPPRIME_CONSTEXPR bool IsPrime32(const std::uint32_t x) noexcept {
-        if (x < 218089) {
+        if (x < 151321) {
             const std::uint32_t a = Divu128(272518712866683587ull % x, 10755835586592736005ull, x).low;
+            if (a == 0) return false;
             if (x < 11881) return GCD32(a, x) == 1;
             const std::uint32_t b = Divu128(827936745744686818ull % x, 10132550402535125089ull, x).low;
+            if (b == 0) return false;
             if (x < 39601) return GCD32((a * b) % x, x) == 1;
-            const std::uint32_t c = Divu128(9647383993136055606ull % x, 17068348107132031867ull, x).low;
-            if (x < 85849) return GCD32(std::uint64_t(a) * b * c % x, x) == 1;
+            const std::uint32_t c = Divu128(9647383993136055606ull % x, 17068348107132031867ull, x).low * a * b % x;
+            if (c == 0) return false;
+            if (x < 85849) return GCD32(c, x) == 1;
             const std::uint32_t d = Divu128(5118528107581154032ull % x, 7251394891134766417ull, x).low;
-            if (x < 151321) return GCD32((std::uint64_t(a) * b % x) * (std::uint64_t(c) * d % x) % x, x) == 1;
-            const std::uint32_t e = Divu128(385001175472415285ull % x, 586477103009887527ull, x).low;
-            return GCD32((std::uint64_t(a) * b * c % x) * (std::uint64_t(d) * e % x) % x, x) == 1;
+            if (d == 0) return false;
+            return GCD32(std::uint64_t(c) * d % x, x) == 1;
         }
         const std::uint32_t h = x * 0xad625b89;
         std::uint32_t d = x - 1;
         std::uint32_t pw = static_cast<std::uint32_t>(Bases[h >> 24]);
         std::uint32_t s = CountrZero(d);
         d >>= s;
-        std::uint32_t cur = 1;
-        while (d) {
-            std::uint32_t tmp = std::uint64_t(pw) * pw % x;
-            if (d & 1) cur = std::uint64_t(cur) * pw % x;
-            pw = tmp;
+        std::uint32_t cur = pw;
+        if (d != 1) {
+            pw = std::uint64_t(pw) * pw % x;
             d >>= 1;
+            while (d != 1) {
+                std::uint32_t tmp = std::uint64_t(pw) * pw % x;
+                if (d & 1) cur = std::uint64_t(cur) * pw % x;
+                pw = tmp;
+                d >>= 1;
+            }
+            cur = std::uint64_t(cur) * pw % x;
         }
-        if (cur == 1 || cur == x - 1) return true;
+        bool flag = cur == 1 || cur == x - 1;
+        if (x % 4 == 3) return flag;
+        if (flag) return true;
         while (--s) {
             cur = std::uint64_t(cur) * cur % x;
             if (cur == x - 1) return true;

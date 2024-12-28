@@ -57,7 +57,7 @@ namespace internal {
     }
 
     // clang-format off
-    LIBCPPRIME_CONSTEXPR const std::uint16_t Bases64[] = {
+    LIBCPPRIME_CONSTEXPR const std::uint16_t Bases64[16384] = {
 1814,1307,1714,6838,1801,179,219,1317,6834,3281,8345,4034,1899,5746,4977,117,12578,18141,4434,4236,543,9046,4005,385,4231,3425,859,1450,2199,4262,7025,1562,717,5611,5298,871,1959,258,4543,8969,1075,15030,21041,7917,913,15929,3450,9218,518,11775,7993,175,107,407,4738,14388,86,6360,3535,3818,8083,11,4337,19601,32654,2566,974,1549,5047,1542,1941,3887,933,295,106,823,1529,7999,8424,2958,17995,1430,8541,5213,341,13034,4437,4058,21281,715,1898,434,1298,8930,33,3466,397,14181,2685,2179,15160,271,175,5403,
 1303,2091,4133,466,2143,3908,2819,159,358,302,7778,2001,1029,182,7405,13580,26511,11758,743,4841,12448,3585,3123,1959,3999,1906,597,8293,2508,8231,8676,485,4925,12605,22286,1099,1385,382,10310,746,293,415,2947,61,295,4797,11775,2902,4254,12326,1335,1541,17775,8067,13739,4254,685,3963,2258,3827,1151,2962,1981,1043,2910,8555,2478,3181,1399,12907,5843,2056,7,598,17287,609,1823,9968,12866,9614,1177,1799,8135,8861,6242,3655,8700,11136,3693,229,6637,8587,4915,820,6594,8899,3012,833,5439,402,387,9998,10074,
 401,9281,2246,12470,7919,1533,2725,947,6314,6681,2733,10132,1535,7066,17066,1529,507,29293,5893,6323,551,506,1686,394,2355,2394,199,8744,3451,1759,12630,8251,21127,603,1349,16013,1916,657,3143,10920,344,1522,3123,10732,635,4927,2641,2786,554,77,8759,2047,8638,233,19015,237,29990,4033,110,3949,351,293,12792,2370,3878,9235,1477,14719,4439,4571,3606,6895,1256,8271,2189,73,1006,28711,1970,8162,1034,1258,3018,5062,2381,1326,19172,17936,17446,4714,7939,975,11261,17179,1138,9907,7654,8844,213,3378,7937,
@@ -226,39 +226,51 @@ namespace internal {
         const std::uint64_t D = (x - 1) >> S;
         const auto one = mint.one(), mone = mint.neg(one);
         auto test2 = [=](std::uint64_t base1, std::uint64_t base2) -> bool {
-            auto a = one, b = one;
             auto c = mint.raw(base1), d = mint.raw(base2);
-            std::uint64_t ex = D;
-            while (ex) {
-                auto e = mint.mul(c, c), f = mint.mul(d, d);
-                if (ex & 1) a = mint.mul(a, e), b = mint.mul(b, f);
-                c = e, d = f;
-                ex >>= 1;
+            auto a = c, b = d;
+            if (D != 1) {
+                c = mint.mul(c, c), d = mint.mul(d, d);
+                std::uint64_t ex = D >> 1;
+                while (ex != 1) {
+                    auto e = mint.mul(c, c), f = mint.mul(d, d);
+                    if (ex & 1) a = mint.mul(a, c), b = mint.mul(b, d);
+                    c = e, d = f;
+                    ex >>= 1;
+                }
             }
+            a = mint.mul(a, c), b = mint.mul(b, d);
             bool res1 = mint.same(a, one) || mint.same(a, mone);
             bool res2 = mint.same(b, one) || mint.same(b, mone);
-            for (std::int32_t i = 0; i != S - 1; ++i) {
-                a = mint.mul(a, a), b = mint.mul(b, b);
-                res1 |= mint.same(a, mone), res2 |= mint.same(b, mone);
+            if (x % 4 == 1 && !(res1 && res2)) {
+                for (std::int32_t i = 0; i != S - 1; ++i) {
+                    a = mint.mul(a, a), b = mint.mul(b, b);
+                    res1 |= mint.same(a, mone), res2 |= mint.same(b, mone);
+                }
             }
             return res1 && res2;
         };
         auto test3 = [=](std::uint64_t base1, std::uint64_t base2, std::uint64_t base3) -> bool {
-            auto a = one, b = one, c = one;
             auto d = mint.raw(base1), e = mint.raw(base2), f = mint.raw(base3);
-            std::uint64_t ex = D;
-            while (ex) {
-                const auto g = mint.mul(d, d), h = mint.mul(e, e), i = mint.mul(f, f);
-                if (ex & 1) a = mint.mul(a, d), b = mint.mul(b, e), c = mint.mul(c, f);
-                d = g, e = h, f = i;
-                ex >>= 1;
+            auto a = d, b = e, c = f;
+            if (D != 1) {
+                d = mint.mul(d, d), e = mint.mul(e, e), f = mint.mul(f, f);
+                std::uint64_t ex = D >> 1;
+                while (ex != 1) {
+                    const auto g = mint.mul(d, d), h = mint.mul(e, e), i = mint.mul(f, f);
+                    if (ex & 1) a = mint.mul(a, d), b = mint.mul(b, e), c = mint.mul(c, f);
+                    d = g, e = h, f = i;
+                    ex >>= 1;
+                }
             }
+            a = mint.mul(a, d), b = mint.mul(b, e), c = mint.mul(c, f);
             bool res1 = mint.same(a, one) || mint.same(a, mone);
             bool res2 = mint.same(b, one) || mint.same(b, mone);
             bool res3 = mint.same(c, one) || mint.same(c, mone);
-            for (std::int32_t i = 0; i != S - 1; ++i) {
-                a = mint.mul(a, a), b = mint.mul(b, b), c = mint.mul(c, c);
-                res1 |= mint.same(a, mone), res2 |= mint.same(b, mone), res3 |= mint.same(c, mone);
+            if (x % 4 == 1 && !(res1 && res2 && res3)) {
+                for (std::int32_t i = 0; i != S - 1; ++i) {
+                    a = mint.mul(a, a), b = mint.mul(b, b), c = mint.mul(c, c);
+                    res1 |= mint.same(a, mone), res2 |= mint.same(b, mone), res3 |= mint.same(c, mone);
+                }
             }
             return res1 && res2 && res3;
         };

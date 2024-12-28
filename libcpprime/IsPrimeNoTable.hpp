@@ -47,12 +47,13 @@ namespace internal {
             auto a = one, b = one;
             auto c = mint.build(base1), d = mint.build(base2);
             std::uint64_t ex = D;
-            while (ex) {
+            while (ex != 1) {
                 auto e = mint.mul(c, c), f = mint.mul(d, d);
-                if (ex & 1) a = mint.mul(a, e), b = mint.mul(b, f);
+                if (ex & 1) a = mint.mul(a, c), b = mint.mul(b, d);
                 c = e, d = f;
                 ex >>= 1;
             }
+            a = mint.mul(a, c), b = mint.mul(b, d);
             bool res1 = mint.same(a, one) || mint.same(a, mone);
             bool res2 = mint.same(b, one) || mint.same(b, mone);
             if (!(res1 && res2)) {
@@ -68,12 +69,13 @@ namespace internal {
             auto a = one, b = one, c = one;
             auto d = mint.build(base1), e = mint.build(base2), f = mint.build(base3);
             std::uint64_t ex = D;
-            while (ex) {
+            while (ex != 1) {
                 const auto g = mint.mul(d, d), h = mint.mul(e, e), i = mint.mul(f, f);
                 if (ex & 1) a = mint.mul(a, d), b = mint.mul(b, e), c = mint.mul(c, f);
                 d = g, e = h, f = i;
                 ex >>= 1;
             }
+            a = mint.mul(a, d), b = mint.mul(b, e), c = mint.mul(c, f);
             bool res1 = mint.same(a, one) || mint.same(a, mone);
             bool res2 = mint.same(b, one) || mint.same(b, mone);
             bool res3 = mint.same(c, one) || mint.same(c, mone);
@@ -90,12 +92,13 @@ namespace internal {
             auto a = one, b = one, c = one, d = one;
             auto e = mint.build(base1), f = mint.build(base2), g = mint.build(base3), h = mint.build(base4);
             std::uint64_t ex = D;
-            while (ex) {
+            while (ex != 1) {
                 auto i = mint.mul(e, e), j = mint.mul(f, f), k = mint.mul(g, g), l = mint.mul(h, h);
                 if (ex & 1) a = mint.mul(a, e), b = mint.mul(b, f), c = mint.mul(c, g), d = mint.mul(d, h);
                 e = i, f = j, g = k, h = l;
                 ex >>= 1;
             }
+            a = mint.mul(a, e), b = mint.mul(b, f), c = mint.mul(c, g), d = mint.mul(d, h);
             bool res1 = mint.same(a, one) || mint.same(a, mone);
             bool res2 = mint.same(b, one) || mint.same(b, mone);
             bool res3 = mint.same(c, one) || mint.same(c, mone);
