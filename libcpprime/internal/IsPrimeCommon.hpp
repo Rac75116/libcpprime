@@ -23,6 +23,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
 **/
+/**
+ * 
+ * The algorithm in this library is based on Bradley Berg's method.
+ * See this page for more information: https://www.techneon.com/download/is.prime.32.base.data
+ * 
+ * Copyright 2018 Bradley Berg   < (My last name) @ t e c h n e o n . c o m >
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * This algorithm is deliberately unpatented. The license above also
+ * lets you even freely use it in commercial code.
+ * 
+ * Primality testing using a hash table of bases originated with Steven Worley.
+ * 
+**/
 #ifndef LIBCPPRIME_INCLUDED_IS_PRIME_COMMON
 #define LIBCPPRIME_INCLUDED_IS_PRIME_COMMON
 

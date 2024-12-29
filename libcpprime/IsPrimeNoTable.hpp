@@ -112,6 +112,7 @@ namespace internal {
             }
             return true;
         };
+        // These bases were discovered by Steve Worley and Jim Sinclair.
         if (x < 585226005592931977ull) {
             if (x < 7999252175582851ull) {
                 if (x < 350269456337ull) return test3(4230279247111683200ull, 14694767155120705706ull, 16641139526367750375ull);
