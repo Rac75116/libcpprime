@@ -55,7 +55,7 @@
 #ifdef _MSC_VER
 #include <intrin.h>
 #include <immintrin.h>
-#pragma intrinsic(__assume, _tzcnt_u64, _umul128, __umulh)
+#pragma intrinsic(_tzcnt_u64, _lzcnt_u64, _umul128, __umulh)
 #if _MSC_VER >= 1900
 #pragma intrinsic(_udiv128)
 #endif
@@ -111,6 +111,33 @@ namespace internal {
         return x & 0x0000007f;
 #endif
     }
+#if !defined(__cpp_lib_bitops) && !defined(__GNUC__) && !defined(_MSC_VER)
+    LIBCPPRIME_CONSTEXPR const char CountlZeroTable[32] = { 0, 31, 9, 30, 3, 8, 13, 29, 2, 5, 7, 21, 12, 24, 28, 19, 1, 10, 4, 14, 6, 22, 25, 20, 11, 15, 23, 26, 16, 27, 17, 18 };
+#endif
+    LIBCPPRIME_CONSTEXPR std::int32_t CountlZero(std::uint64_t n) noexcept {
+#ifdef __cpp_lib_bitops
+        Assume(n != 0);
+        return std::countl_zero(n);
+#elif defined(__GNUC__)
+        return __builtin_clzll(n);
+#elif defined(_MSC_VER)
+        return _lzcnt_u64(n);
+#else
+        std::int32_t offset = 0;
+        std::uint32_t x = n >> 32;
+        if (n <= 0xffffffff) {
+            offset = 32;
+            x = n;
+        }
+        x |= x >> 1;
+        x |= x >> 2;
+        x |= x >> 4;
+        x |= x >> 8;
+        x |= x >> 16;
+        x++;
+        return offset + CountlZeroTable[(x * 0x076be629u) >> 27];
+#endif
+    }
     LIBCPPRIME_CONSTEXPR Int64Pair Mulu128(std::uint64_t muler, std::uint64_t mulnd) noexcept {
 #if defined(__SIZEOF_INT128__)
         __uint128_t tmp = static_cast<__uint128_t>(muler) * mulnd;
@@ -141,8 +168,7 @@ namespace internal {
         return { (muler * mulnd) + w1 + k, (t << 32) + w3 };
 #endif
     }
-    LIBCPPRIME_CONSTEXPR
-    std::uint64_t Mulu128High(std::uint64_t muler, std::uint64_t mulnd) noexcept {
+    LIBCPPRIME_CONSTEXPR std::uint64_t Mulu128High(std::uint64_t muler, std::uint64_t mulnd) noexcept {
 #if defined(__SIZEOF_INT128__)
         return static_cast<std::uint64_t>((static_cast<__uint128_t>(muler) * mulnd) >> 64);
 #else
@@ -214,11 +240,14 @@ namespace internal {
         return x << l;
     }
 
-    template<bool Strict = false> class MontgomeryModint64Impl {
+    template<std::int32_t Strict = 0> class MontgomeryModint64Impl {
         std::uint64_t mod_ = 0, rs = 0, nr = 0, np = 0;
         LIBCPPRIME_CONSTEXPR std::uint64_t reduce(const std::uint64_t n) const noexcept {
             std::uint64_t q = n * nr;
-            if LIBCPPRIME_IF_CONSTEXPR (Strict) {
+            if LIBCPPRIME_IF_CONSTEXPR (Strict == 1) {
+                std::uint64_t m = Mulu128High(q, mod_);
+                return m <= mod_ ? mod_ - m : 0 - m;
+            } else if LIBCPPRIME_IF_CONSTEXPR (Strict == 2) {
                 auto m = Mulu128(q, mod_);
                 std::uint64_t t = m.high + std::uint64_t(m.low + n < m.low);
                 return t - mod_ * (t >= mod_);
@@ -231,7 +260,11 @@ namespace internal {
             auto tmp = Mulu128(a, b);
             std::uint64_t d = tmp.high, c = tmp.low;
             std::uint64_t q = c * nr;
-            if LIBCPPRIME_IF_CONSTEXPR (Strict) {
+            if LIBCPPRIME_IF_CONSTEXPR (Strict == 1) {
+                std::uint64_t m = Mulu128High(q, mod_);
+                std::uint64_t t = d - m;
+                return t >= mod_ ? t + mod_ : t;
+            } else if LIBCPPRIME_IF_CONSTEXPR (Strict == 2) {
                 auto m = Mulu128(q, mod_);
                 std::uint64_t t = m.high + std::uint64_t(m.low + c < m.low);
                 if (t >= mod_ - d) return t + d - mod_;
@@ -250,7 +283,7 @@ namespace internal {
             rs = Divu128(0xffffffffffffffff % n, 0 - n, n).low;
             nr = n;
             for (std::uint32_t i = 0; i != 5; ++i) nr *= 2 - n * nr;
-            if LIBCPPRIME_IF_CONSTEXPR (Strict) nr = 0 - nr;
+            if LIBCPPRIME_IF_CONSTEXPR (Strict == 2) nr = 0 - nr;
             np = reduce(rs);
         }
         LIBCPPRIME_CONSTEXPR std::uint64_t build(std::uint32_t x) const noexcept { return reduce(x % mod_, rs); }
@@ -294,6 +327,33 @@ namespace internal {
                 Assume(x < 2 * mod_ && y < 2 * mod_);
                 std::uint64_t tmp = x - y;
                 return (tmp == 0) || (tmp == mod_) || (tmp == 0 - mod_);
+            }
+        }
+        LIBCPPRIME_CONSTEXPR bool is_zero(std::uint64_t x) const noexcept {
+            if LIBCPPRIME_IF_CONSTEXPR (Strict) {
+                Assume(x < mod_);
+                return x == 0;
+            } else {
+                Assume(x < 2 * mod_);
+                return x == 0 || x == mod_;
+            }
+        }
+        LIBCPPRIME_CONSTEXPR std::uint64_t add(std::uint64_t x, std::uint64_t y) const noexcept {
+            if LIBCPPRIME_IF_CONSTEXPR (Strict) {
+                Assume(x < mod_ && y < mod_);
+                return x + y - (x >= mod_ - y) * mod_;
+            } else {
+                Assume(x < 2 * mod_ && y < 2 * mod_);
+                return x + y - (x >= 2 * mod_ - y) * (2 * mod_);
+            }
+        }
+        LIBCPPRIME_CONSTEXPR std::uint64_t sub(std::uint64_t x, std::uint64_t y) const noexcept {
+            if LIBCPPRIME_IF_CONSTEXPR (Strict) {
+                Assume(x < mod_ && y < mod_);
+                return x - y + (x < y) * mod_;
+            } else {
+                Assume(x < 2 * mod_ && y < 2 * mod_);
+                return x - y + (x < y) * (2 * mod_);
             }
         }
     };

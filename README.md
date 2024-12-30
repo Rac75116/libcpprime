@@ -78,6 +78,8 @@ g++ -I ./libcpprime -O3 Main.cpp
 
 # Releases
 
+- 2024/12/30 ver 1.2.6
+  - Improve performance
 - 2024/12/29 ver 1.2.5
   - Add copyrights notice
 - 2024/12/28 ver 1.2.4
