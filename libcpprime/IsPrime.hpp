@@ -237,7 +237,7 @@ namespace internal {
 206,119,3406,6754,309,3909,646,3677,3514,8797,1435,301,9215,3730,7282,165,3381,303,6369,2627,115,761,3695,1233,1297,1803,1130,122,511,58,6426,1389,1433,9102,943,2795,13162,9905,899,9740,8719,517,5115,4977,1486,8259,7163,13549,7561,305,119,973,7698,5619,5326,5772,32611,8846,1709,4641,782,2503,3905,4051,4923,165,16132,16827,1913,6590,322,741,522,7666,1655,5087,468,8541,1169,4455,22993,2801,6623,446,1979,10923,3503,32053,523,5721,9608,955,11766,49919,1982,66,3347,9508,439,145,5697,1026,1569
     };
     // clang-format on
-    template<bool Strict> LIBCPPRIME_CONSTEXPR bool IsPrime64(const std::uint64_t x) noexcept {
+    template<std::int32_t Strict> LIBCPPRIME_CONSTEXPR bool IsPrime64(const std::uint64_t x) noexcept {
         MontgomeryModint64Impl<Strict> mint;
         mint.set(x);
         const std::int32_t S = CountrZero(x - 1);
@@ -304,8 +304,8 @@ LIBCPPRIME_CONSTEXPR bool IsPrime(std::uint64_t n) noexcept {
     else {
         if ((n & 1) == 0 || 6148914691236517205u >= 12297829382473034411u * n || 3689348814741910323u >= 14757395258967641293u * n || 2635249153387078802u >= 7905747460161236407u * n || 1676976733973595601u >= 3353953467947191203u * n || 1418980313362273201u >= 5675921253449092805u * n || 1085102592571150095u >= 17361641481138401521u * n) return false;
         if (n <= 0xffffffff) return internal::IsPrime32(n);
-        else if (n < (std::uint64_t(1) << 62)) return internal::IsPrime64<false>(n);
-        else return internal::IsPrime64<true>(n);
+        else if (n < (std::uint64_t(1) << 63)) return internal::IsPrime64<1>(n);
+        else return internal::IsPrime64<2>(n);
     }
 }
 
