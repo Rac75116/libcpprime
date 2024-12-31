@@ -163,8 +163,8 @@ namespace internal {
         } else return test3(2ull, 325ull, 9375ull) && test4(28178ull, 450775ull, 9780504ull, 1795265022ull);
     }
 
-    template<std::int32_t Strict> LIBCPPRIME_CONSTEXPR bool IsPrime64BailliePSW(const std::uint64_t x) noexcept {
-        MontgomeryModint64Impl<Strict> mint;
+    LIBCPPRIME_CONSTEXPR bool IsPrime64BailliePSW(const std::uint64_t x) noexcept {
+        MontgomeryModint64Impl<true> mint;
         mint.set(x);
         const std::int32_t S = CountrZero(x - 1);
         const std::uint64_t D = (x - 1) >> S;
@@ -228,8 +228,7 @@ LIBCPPRIME_CONSTEXPR bool IsPrimeNoTable(std::uint64_t n) noexcept {
         if ((n & 1) == 0 || 6148914691236517205u >= 12297829382473034411u * n || 3689348814741910323u >= 14757395258967641293u * n || 2635249153387078802u >= 7905747460161236407u * n || 1676976733973595601u >= 3353953467947191203u * n || 1418980313362273201u >= 5675921253449092805u * n || 1085102592571150095u >= 17361641481138401521u * n) return false;
         if (n <= 0xffffffff) return internal::IsPrime32(n);
         else if (n < (std::uint64_t(1) << 62)) return internal::IsPrime64MillerRabin(n);
-        else if (n < (std::uint64_t(1) << 63)) return internal::IsPrime64BailliePSW<1>(n);
-        else return internal::IsPrime64BailliePSW<2>(n);
+        else return internal::IsPrime64BailliePSW(n);
     }
 }
 

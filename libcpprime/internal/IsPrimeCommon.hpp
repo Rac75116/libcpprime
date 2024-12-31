@@ -240,17 +240,13 @@ namespace internal {
         return x << l;
     }
 
-    template<std::int32_t Strict = 0> class MontgomeryModint64Impl {
+    template<bool Strict = false> class MontgomeryModint64Impl {
         std::uint64_t mod_ = 0, rs = 0, nr = 0, np = 0;
         LIBCPPRIME_CONSTEXPR std::uint64_t reduce(const std::uint64_t n) const noexcept {
             std::uint64_t q = n * nr;
-            if LIBCPPRIME_IF_CONSTEXPR (Strict == 1) {
+            if LIBCPPRIME_IF_CONSTEXPR (Strict) {
                 std::uint64_t m = Mulu128High(q, mod_);
-                return m <= mod_ ? mod_ - m : 0 - m;
-            } else if LIBCPPRIME_IF_CONSTEXPR (Strict == 2) {
-                auto m = Mulu128(q, mod_);
-                std::uint64_t t = m.high + std::uint64_t(m.low + n < m.low);
-                return t - mod_ * (t >= mod_);
+                return m == 0 ? 0 : mod_ - m;
             } else {
                 std::uint64_t m = Mulu128High(q, mod_);
                 return mod_ - m;
@@ -260,15 +256,10 @@ namespace internal {
             auto tmp = Mulu128(a, b);
             std::uint64_t d = tmp.high, c = tmp.low;
             std::uint64_t q = c * nr;
-            if LIBCPPRIME_IF_CONSTEXPR (Strict == 1) {
+            if LIBCPPRIME_IF_CONSTEXPR (Strict) {
                 std::uint64_t m = Mulu128High(q, mod_);
                 std::uint64_t t = d - m;
-                return t >= mod_ ? t + mod_ : t;
-            } else if LIBCPPRIME_IF_CONSTEXPR (Strict == 2) {
-                auto m = Mulu128(q, mod_);
-                std::uint64_t t = m.high + std::uint64_t(m.low + c < m.low);
-                if (t >= mod_ - d) return t + d - mod_;
-                else return t + d;
+                return d < m ? t + mod_ : t;
             } else {
                 std::uint64_t m = Mulu128High(q, mod_);
                 return d + mod_ - m;
@@ -283,7 +274,6 @@ namespace internal {
             rs = Divu128(0xffffffffffffffff % n, 0 - n, n).low;
             nr = n;
             for (std::uint32_t i = 0; i != 5; ++i) nr *= 2 - n * nr;
-            if LIBCPPRIME_IF_CONSTEXPR (Strict == 2) nr = 0 - nr;
             np = reduce(rs);
         }
         LIBCPPRIME_CONSTEXPR std::uint64_t build(std::uint32_t x) const noexcept { return reduce(x % mod_, rs); }
