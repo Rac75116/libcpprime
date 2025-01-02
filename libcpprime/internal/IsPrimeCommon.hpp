@@ -230,11 +230,11 @@ namespace internal {
         y >>= m;
         while (x != y) {
             const std::uint32_t a = y - x, b = x - y;
-            const std::int32_t m = CountrZero(a), n = CountrZero(b);
-            Assume(m == n);
+            const std::int32_t p = CountrZero(a), q = CountrZero(b);
+            Assume(p == q);
             const std::uint32_t s = y < x ? b : a;
             const std::uint32_t t = x < y ? x : y;
-            x = s >> m;
+            x = s >> p;
             y = t;
         }
         return x << l;
@@ -356,13 +356,13 @@ namespace internal {
     // clang-format on
     LIBCPPRIME_CONSTEXPR bool IsPrime32(const std::uint32_t x) noexcept {
         if (x < 85849) {
-            const std::uint32_t a = Divu128(272518712866683587ull % x, 10755835586592736005ull, x).low;
+            const std::uint32_t a = static_cast<std::uint32_t>(Divu128(272518712866683587ull % x, 10755835586592736005ull, x).low);
             if (a == 0) return false;
             if (x < 11881) return GCD32(a, x) == 1;
-            const std::uint32_t b = Divu128(827936745744686818ull % x, 10132550402535125089ull, x).low;
+            const std::uint32_t b = static_cast<std::uint32_t>(Divu128(827936745744686818ull % x, 10132550402535125089ull, x).low);
             if (b == 0) return false;
             if (x < 39601) return GCD32((a * b) % x, x) == 1;
-            const std::uint32_t c = Divu128(9647383993136055606ull % x, 17068348107132031867ull, x).low * a * b % x;
+            const std::uint32_t c = static_cast<std::uint32_t>(Divu128(9647383993136055606ull % x, 17068348107132031867ull, x).low * a * b % x);
             if (c == 0) return false;
             return GCD32(c, x) == 1;
         }
@@ -374,7 +374,7 @@ namespace internal {
         if (x < (1u << 21)) {
             std::uint64_t m = 0xffffffffffffffff / x + 1;
             auto mul = [m, x](std::uint32_t a, std::uint32_t b) -> std::uint32_t {
-                return Mulu128High(static_cast<std::uint64_t>(a) * b * m, x);
+                return static_cast<std::uint32_t>(Mulu128High(static_cast<std::uint64_t>(a) * b * m, x));
             };
             std::uint32_t cur = pw;
             if (d != 1) {

@@ -65,11 +65,11 @@ namespace internal {
             while (a != 0) {
                 std::int32_t s = CountrZero(a);
                 a >>= s;
-                res ^= ((s & 1) && ((n & 0b111) == 3 || (n & 0b111) == 5));
+                res ^= ((s & 1) & ((n & 0b111) == 3 || (n & 0b111) == 5));
                 res ^= ((a & 0b11) == 3 && (n & 0b11) == 3);
-                std::uint64_t tmp = n;
+                std::uint64_t t = n;
                 n = a;
-                a = tmp % n;
+                a = t % n;
             }
             if (n == 1 && res) break;
             Z += 4;
@@ -225,7 +225,7 @@ LIBCPPRIME_CONSTEXPR bool IsPrimeNoTable(std::uint64_t n) noexcept {
     if (n < 1024) return internal::IsPrime10(n);
     else {
         if ((n & 1) == 0 || 6148914691236517205u >= 12297829382473034411u * n || 3689348814741910323u >= 14757395258967641293u * n || 2635249153387078802u >= 7905747460161236407u * n || 1676976733973595601u >= 3353953467947191203u * n || 1418980313362273201u >= 5675921253449092805u * n || 1085102592571150095u >= 17361641481138401521u * n) return false;
-        if (n <= 0xffffffff) return internal::IsPrime32(n);
+        if (n <= 0xffffffff) return internal::IsPrime32(static_cast<std::uint32_t>(n));
         else if (n < (std::uint64_t(1) << 62)) return internal::IsPrime64MillerRabin(n);
         else return internal::IsPrime64BailliePSW(n);
     }

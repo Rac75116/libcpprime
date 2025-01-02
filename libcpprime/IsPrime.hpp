@@ -302,7 +302,7 @@ LIBCPPRIME_CONSTEXPR bool IsPrime(std::uint64_t n) noexcept {
     if (n < 65536) return internal::IsPrime16(n);
     else {
         if ((n & 1) == 0 || 6148914691236517205u >= 12297829382473034411u * n || 3689348814741910323u >= 14757395258967641293u * n || 2635249153387078802u >= 7905747460161236407u * n || 1676976733973595601u >= 3353953467947191203u * n || 1418980313362273201u >= 5675921253449092805u * n || 1085102592571150095u >= 17361641481138401521u * n) return false;
-        if (n <= 0xffffffff) return internal::IsPrime32(n);
+        if (n <= 0xffffffff) return internal::IsPrime32(static_cast<std::uint32_t>(n));
         else return internal::IsPrime64(n);
     }
 }
