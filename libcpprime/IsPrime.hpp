@@ -238,8 +238,7 @@ namespace internal {
     };
     // clang-format on
     LIBCPPRIME_CONSTEXPR bool IsPrime64(const std::uint64_t x) noexcept {
-        MontgomeryModint64Impl<true> mint;
-        mint.set(x);
+        const MontgomeryModint64Impl<true> mint(x);
         const std::int32_t S = CountrZero(x - 1);
         const std::uint64_t D = (x - 1) >> S;
         const auto one = mint.one(), mone = mint.neg(one);

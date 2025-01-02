@@ -79,8 +79,7 @@ namespace internal {
     }
 
     LIBCPPRIME_CONSTEXPR bool IsPrime64MillerRabin(const std::uint64_t x) noexcept {
-        MontgomeryModint64Impl<0> mint;
-        mint.set(x);
+        const MontgomeryModint64Impl<false> mint(x);
         const std::int32_t S = CountrZero(x - 1);
         const std::uint64_t D = (x - 1) >> S;
         const auto one = mint.one(), mone = mint.neg(one);
@@ -164,12 +163,11 @@ namespace internal {
     }
 
     LIBCPPRIME_CONSTEXPR bool IsPrime64BailliePSW(const std::uint64_t x) noexcept {
-        MontgomeryModint64Impl<true> mint;
-        mint.set(x);
-        const std::int32_t S = CountrZero(x - 1);
-        const std::uint64_t D = (x - 1) >> S;
+        const MontgomeryModint64Impl<true> mint(x);
         const auto one = mint.one(), mone = mint.neg(one);
         auto miller_rabin_test = [&]() -> bool {
+            const std::int32_t S = CountrZero(x - 1);
+            const std::uint64_t D = (x - 1) >> S;
             auto a = one, b = mint.raw(2);
             std::uint64_t ex = D;
             while (ex != 1) {
@@ -189,24 +187,25 @@ namespace internal {
             return false;
         };
         if (!miller_rabin_test()) return false;
-        std::uint64_t Z = GetLucasBase(x);
-        if (Z <= 1) return Z == 1;
-        const std::uint64_t Q = mint.raw(x - (Z - 1) / 4);
+        std::uint64_t D = GetLucasBase(x);
+        if (D <= 1) return D == 1;
+        const std::uint64_t Q = mint.raw(x - (D - 1) / 4);
         std::uint64_t u = one, v = one, Qn = Q;
         std::uint64_t k = (x + 1) << CountlZero(x + 1);
-        Z = mint.raw(Z);
+        D = mint.raw(D);
         std::uint64_t t = (x >> 1) + 1;
         for (k <<= 1; k; k <<= 1) {
-            u = mint.mul(u, v);
-            v = mint.sub(mint.mul(v, v), mint.add(Qn, Qn));
+            std::uint64_t Qt = mint.add(Qn, Qn);
             Qn = mint.mul(Qn, Qn);
+            u = mint.mul(u, v);
+            v = mint.sub(mint.mul(v, v), Qt);
             if (k >> 63) {
-                std::uint64_t uu = mint.add(u, v);
-                uu = (uu >> 1) + ((uu & 1) ? t : 0);
-                v = mint.add(mint.mul(Z, u), v);
-                v = (v >> 1) + ((v & 1) ? t : 0);
-                u = uu;
                 Qn = mint.mul(Qn, Q);
+                std::uint64_t uu = u;
+                u = mint.add(u, v);
+                u = (u >> 1) + ((u & 1) ? t : 0);
+                v = mint.add(mint.mul(D, uu), v);
+                v = (v >> 1) + ((v & 1) ? t : 0);
             }
         }
         if (mint.is_zero(u) || mint.is_zero(v)) return true;
