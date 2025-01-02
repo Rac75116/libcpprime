@@ -65,11 +65,11 @@ namespace internal {
             while (a != 0) {
                 std::int32_t s = CountrZero(a);
                 a >>= s;
-                res ^= ((s & 1) && ((n & 0b111) == 3 || (n & 0b111) == 5));
+                res ^= ((s & 1) & ((n & 0b111) == 3 || (n & 0b111) == 5));
                 res ^= ((a & 0b11) == 3 && (n & 0b11) == 3);
-                std::uint64_t tmp = n;
+                std::uint64_t t = n;
                 n = a;
-                a = tmp % n;
+                a = t % n;
             }
             if (n == 1 && res) break;
             Z += 4;
@@ -79,8 +79,7 @@ namespace internal {
     }
 
     LIBCPPRIME_CONSTEXPR bool IsPrime64MillerRabin(const std::uint64_t x) noexcept {
-        MontgomeryModint64Impl<0> mint;
-        mint.set(x);
+        const MontgomeryModint64Impl<false> mint(x);
         const std::int32_t S = CountrZero(x - 1);
         const std::uint64_t D = (x - 1) >> S;
         const auto one = mint.one(), mone = mint.neg(one);
@@ -164,12 +163,11 @@ namespace internal {
     }
 
     LIBCPPRIME_CONSTEXPR bool IsPrime64BailliePSW(const std::uint64_t x) noexcept {
-        MontgomeryModint64Impl<true> mint;
-        mint.set(x);
-        const std::int32_t S = CountrZero(x - 1);
-        const std::uint64_t D = (x - 1) >> S;
+        const MontgomeryModint64Impl<true> mint(x);
         const auto one = mint.one(), mone = mint.neg(one);
         auto miller_rabin_test = [&]() -> bool {
+            const std::int32_t S = CountrZero(x - 1);
+            const std::uint64_t D = (x - 1) >> S;
             auto a = one, b = mint.raw(2);
             std::uint64_t ex = D;
             while (ex != 1) {
@@ -189,24 +187,25 @@ namespace internal {
             return false;
         };
         if (!miller_rabin_test()) return false;
-        std::uint64_t Z = GetLucasBase(x);
-        if (Z <= 1) return Z == 1;
-        const std::uint64_t Q = mint.raw(x - (Z - 1) / 4);
+        std::uint64_t D = GetLucasBase(x);
+        if (D <= 1) return D == 1;
+        const std::uint64_t Q = mint.raw(x - (D - 1) / 4);
         std::uint64_t u = one, v = one, Qn = Q;
         std::uint64_t k = (x + 1) << CountlZero(x + 1);
-        Z = mint.raw(Z);
+        D = mint.raw(D);
         std::uint64_t t = (x >> 1) + 1;
         for (k <<= 1; k; k <<= 1) {
-            u = mint.mul(u, v);
-            v = mint.sub(mint.mul(v, v), mint.add(Qn, Qn));
+            std::uint64_t Qt = mint.add(Qn, Qn);
             Qn = mint.mul(Qn, Qn);
+            u = mint.mul(u, v);
+            v = mint.sub(mint.mul(v, v), Qt);
             if (k >> 63) {
-                std::uint64_t uu = mint.add(u, v);
-                uu = (uu >> 1) + ((uu & 1) ? t : 0);
-                v = mint.add(mint.mul(Z, u), v);
-                v = (v >> 1) + ((v & 1) ? t : 0);
-                u = uu;
                 Qn = mint.mul(Qn, Q);
+                std::uint64_t uu = u;
+                u = mint.add(u, v);
+                u = (u >> 1) + ((u & 1) ? t : 0);
+                v = mint.add(mint.mul(D, uu), v);
+                v = (v >> 1) + ((v & 1) ? t : 0);
             }
         }
         if (mint.is_zero(u) || mint.is_zero(v)) return true;
@@ -226,7 +225,7 @@ LIBCPPRIME_CONSTEXPR bool IsPrimeNoTable(std::uint64_t n) noexcept {
     if (n < 1024) return internal::IsPrime10(n);
     else {
         if ((n & 1) == 0 || 6148914691236517205u >= 12297829382473034411u * n || 3689348814741910323u >= 14757395258967641293u * n || 2635249153387078802u >= 7905747460161236407u * n || 1676976733973595601u >= 3353953467947191203u * n || 1418980313362273201u >= 5675921253449092805u * n || 1085102592571150095u >= 17361641481138401521u * n) return false;
-        if (n <= 0xffffffff) return internal::IsPrime32(n);
+        if (n <= 0xffffffff) return internal::IsPrime32(static_cast<std::uint32_t>(n));
         else if (n < (std::uint64_t(1) << 62)) return internal::IsPrime64MillerRabin(n);
         else return internal::IsPrime64BailliePSW(n);
     }
