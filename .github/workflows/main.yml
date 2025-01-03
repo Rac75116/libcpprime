@@ -74,12 +74,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        clang: [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+        clang: [14, 15, 16, 17, 18]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Install clang++-${{ matrix.clang }}
-        run: sudo wget -qO- https://apt.llvm.org/llvm.sh | bash -s -- ${{ matrix.clang }}
+      - name: Update apt
+        run: sudo apt update
+      - name: Install clang++${{ matrix.clang }}
+        run: sudo apt install clang++-${{ matrix.clang }}
       - name: Run build on C++20
         run: clang++-${{ matrix.clang }} -std=c++2a -Wall -Wextra -O3 -march=native -I. -o ./tests/tests-clang-${{ matrix.clang }}.out ./tests/tests.cpp
       - name: Run tests
