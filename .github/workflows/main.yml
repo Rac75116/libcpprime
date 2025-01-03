@@ -53,7 +53,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Update apt
-        run: sudo apt update && sudo apt install build-essential
+        run: deb http://dk.archive.ubuntu.com/ubuntu/ bionic main universe && sudo apt update && sudo apt install build-essential
       - name: Install g++${{ matrix.gcc }}
         run: sudo apt install g++-${{ matrix.gcc }}
       - name: Run build on C++${{ matrix.cpp }}
