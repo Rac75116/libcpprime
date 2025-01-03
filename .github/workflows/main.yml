@@ -6,13 +6,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
-    name: Run Test
+  test_old_gcc:
+    name: Run Test on old g++
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        gcc: [6, 7, 8, 9, 10, 11, 12, 13, 14]
+        gcc: [6, 7, 8]
         cpp: ["11"]
         include:
           - gcc: 6
@@ -27,7 +27,27 @@ jobs:
             cpp: "17"
           - gcc: 8
             cpp: "2a"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Update apt
+        run: sudo add-apt-repository ppa:ubuntu-toolchain-r/test && sudo apt-get update
+      - name: Install g++${{ matrix.gcc }}
+        run: sudo apt-get install g++-${{ matrix.gcc }}
+      - name: Run build on C++${{ matrix.cpp }}
+        run: g++-${{ matrix.gcc }} -std=c++${{ matrix.cpp }} -Wall -Wextra -O3 -march=native -I. -o ./tests/tests-${{ matrix.gcc }}-${{ matrix.cpp }}.out ./tests/tests.cpp
+      - name: Run tests
+        run: ./tests/tests-${{matrix.gcc}}-${{ matrix.cpp }}.out
 
+  test_gcc:
+    name: Run Test on g++
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        gcc: [9, 10, 11, 12, 13, 14]
+        cpp: ["11"]
+        include:
           - gcc: 9
             cpp: "2a"
 
@@ -53,7 +73,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Update apt
-        run: sudo apt http://dk.archive.ubuntu.com/ubuntu/ bionic main universe && sudo apt update && sudo apt install build-essential
+        run: sudo apt update && sudo apt install build-essential
       - name: Install g++${{ matrix.gcc }}
         run: sudo apt install g++-${{ matrix.gcc }}
       - name: Run build on C++${{ matrix.cpp }}
