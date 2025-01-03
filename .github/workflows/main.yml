@@ -13,6 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         gcc: [9, 10, 11, 12, 13, 14]
+        cpp: []
         include:
           - gcc: 9
             cpp: "11"
@@ -46,9 +47,9 @@ jobs:
         uses: actions/checkout@v4
       - name: Update apt
         run: sudo apt update && sudo apt install build-essential
-      - name: Install g++
+      - name: Install g++${{ matrix.gcc }}
         run: sudo apt install g++-${{ matrix.gcc }}
-      - name: Run build
+      - name: Run build on C++${{ matrix.cpp }}
         run: g++-${{ matrix.gcc }} -std=c++${{ matrix.cpp }} -Wall -Wextra -O3 -march=native -I. -o ./tests/tests-${{ matrix.gcc }}-${{ matrix.cpp }}.out ./tests/tests.cpp
       - name: Run tests
         run: ./tests/tests-${{matrix.gcc}}-${{ matrix.cpp }}.out
