@@ -13,10 +13,34 @@ jobs:
       fail-fast: false
       matrix:
         gcc: [9, 10, 11, 12, 13, 14]
-        cpp: ["11", "14", "17", "20", "2a"]
         include:
+          - gcc: 9
+            cpp: "11"
+          - gcc: 9
+            cpp: "14"
+          - gcc: 9
+            cpp: "17"
+          - gcc: 9
+            cpp: "2a"
+
+          - gcc: 10
+            cpp: "20"
+
+          - gcc: 11
+            cpp: "20"
+          - gcc: 11
+            cpp: "23"
+
+          - gcc: 12
+            cpp: "23"
+
+          - gcc: 13
+            cpp: "23"
+
           - gcc: 14
-            cpp: "2c"
+            cpp: "23"
+          - gcc: 14
+            cpp: "26"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

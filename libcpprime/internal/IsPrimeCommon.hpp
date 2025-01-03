@@ -182,7 +182,7 @@ namespace internal {
 #endif
     }
     LIBCPPRIME_CONSTEXPR Int64Pair Divu128(std::uint64_t high, std::uint64_t low, std::uint64_t div) noexcept {
-#if (defined(__GNUC__) || defined(__ICC)) && defined(__x86_64__)
+#if (defined(__GNUC__) || defined(__ICC)) && defined(__x86_64__) && __cpp_constexpr >= 201907L
         if LIBCPPRIME_IF_CONSTEXPR (sizeof(void*) == 8) {
 #ifdef __cpp_lib_is_constant_evaluated
             if (!std::is_constant_evaluated())
