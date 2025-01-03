@@ -81,7 +81,7 @@ jobs:
       - name: Update apt
         run: sudo apt update
       - name: Install clang++${{ matrix.clang }}
-        run: sudo apt install clang++-${{ matrix.clang }}
+        run: sudo apt install clang-${{ matrix.clang }}
       - name: Run build on C++20
         run: clang++-${{ matrix.clang }} -std=c++2a -Wall -Wextra -O3 -march=native -I. -o ./tests/tests-clang-${{ matrix.clang }}.out ./tests/tests.cpp
       - name: Run tests
