@@ -13,6 +13,19 @@ jobs:
       fail-fast: false
       matrix:
         gcc: [9, 10, 11, 12, 13, 14]
+        include:
+          - gcc: 9
+            cpp: ["17", "2a"]
+          - gcc: 10
+            cpp: ["17", "20"]
+          - gcc: 11
+            cpp: ["17", "20"]
+          - gcc: 12
+            cpp: ["17", "20"]
+          - gcc: 13
+            cpp: ["17", "20"]
+          - gcc: 14
+            cpp: ["17", "20"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,6 +34,6 @@ jobs:
       - name: Install g++
         run: sudo apt install g++-${{ matrix.gcc }}
       - name: Run build
-        run: g++-${{ matrix.gcc }} -std=c++20 -Wall -Wextra -O3 -march=native -I. -o ./tests/tests-${{ matrix.gcc }}.out ./tests/tests.cpp
+        run: g++-${{ matrix.gcc }} -std=c++${{ matrix.cpp }} -Wall -Wextra -O3 -march=native -I. -o ./tests/tests-${{ matrix.gcc }}-${{ matrix.cpp }}.out ./tests/tests.cpp
       - name: Run tests
-        run: ./tests/tests-${{matrix.gcc}}.out
+        run: ./tests/tests-${{matrix.gcc}}-${{ matrix.cpp }}.out
