@@ -7,7 +7,8 @@ on:
 
 jobs:
   test_old_gcc:
-    name: Run Test on old g++
+    name: Run Test (old g++ / ubuntu)
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
@@ -21,7 +22,6 @@ jobs:
 
           - gcc: 8
             cpp: "2a"
-    runs-on: ubuntu-20.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,16 +30,16 @@ jobs:
       - name: Install g++${{ matrix.gcc }}
         run: sudo apt-get install g++-${{ matrix.gcc }}
       - name: Run build on C++${{ matrix.cpp }}
-        run: g++-${{ matrix.gcc }} -std=c++${{ matrix.cpp }} -Wall -Wextra -O3 -march=native -I. -o ./tests/tests-${{ matrix.gcc }}-${{ matrix.cpp }}.out ./tests/tests.cpp
+        run: g++-${{ matrix.gcc }} -std=c++${{ matrix.cpp }} -Wall -Wextra -O3 -march=native -I. -o ./tests/tests-gcc-${{ matrix.gcc }}-${{ matrix.cpp }}.out ./tests/tests.cpp
       - name: Run tests
-        run: ./tests/tests-${{matrix.gcc}}-${{ matrix.cpp }}.out
+        run: ./tests/tests-gcc-${{matrix.gcc}}-${{ matrix.cpp }}.out
 
   test_gcc:
-    name: Run Test on g++
+    name: Run Test (g++ / ubuntu)
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
         gcc: [9, 10, 11, 12, 13, 14]
         cpp: ["2a"]
         include:
@@ -56,7 +56,6 @@ jobs:
             cpp: "23"
           - gcc: 14
             cpp: "26"
-    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -65,6 +64,23 @@ jobs:
       - name: Install g++${{ matrix.gcc }}
         run: sudo apt install g++-${{ matrix.gcc }}
       - name: Run build on C++${{ matrix.cpp }}
-        run: g++-${{ matrix.gcc }} -std=c++${{ matrix.cpp }} -Wall -Wextra -O3 -march=native -I. -o ./tests/tests-${{ matrix.gcc }}-${{ matrix.cpp }}.out ./tests/tests.cpp
+        run: g++-${{ matrix.gcc }} -std=c++${{ matrix.cpp }} -Wall -Wextra -O3 -march=native -I. -o ./tests/tests-gcc-${{ matrix.gcc }}-${{ matrix.cpp }}.out ./tests/tests.cpp
       - name: Run tests
-        run: ./tests/tests-${{matrix.gcc}}-${{ matrix.cpp }}.out
+        run: ./tests/tests-gcc-${{matrix.gcc}}-${{ matrix.cpp }}.out
+
+  test_clang:
+    name: Run Test (clang++ / ubuntu)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Update apt
+        run: sudo apt update
+      - name: Install clang++
+        run: wget -O - https://apt.llvm.org/llvm.sh
+      - name: Run build
+        run: clang++ -std=c++20 -Wall -Wextra -O3 -march=native -I. -o ./tests/tests-clang.out ./tests/tests.cpp
+      - name: Run tests
+        run: ./tests/tests-clang.out
