@@ -41,16 +41,8 @@ jobs:
       fail-fast: false
       matrix:
         gcc: [9, 10, 11, 12, 13, 14]
-        cpp: [default]
+        cpp: ["2a"]
         include:
-          - gcc: 9
-            cpp: "2a"
-
-          - gcc: 10
-            cpp: "20"
-
-          - gcc: 11
-            cpp: "20"
           - gcc: 11
             cpp: "23"
 
