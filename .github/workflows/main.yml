@@ -1,0 +1,16 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test: # 1つ目のジョブ
+    name: Run Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run build
+        run: echo "Hello, World!"
