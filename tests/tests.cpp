@@ -4,6 +4,7 @@
 #include <iostream>
 #include "tests/constexpr_tests.cpp"
 int main() {
+    std::cout << ConstexprTest << std::endl;
     {
         std::ifstream ifs("./tests/Primes.txt");
         if (!ifs) return 1;

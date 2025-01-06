@@ -48,4 +48,6 @@ constexpr bool ConstexprTest = []() {
     return flag;
 }();
 static_assert(ConstexprTest);
+#else
+constexpr bool ConstexprTest = false;
 #endif
