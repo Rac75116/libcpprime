@@ -78,8 +78,6 @@ g++ -I ./libcpprime -O3 Main.cpp
 
 # Releases
 
-- 2025/01/05 ver 1.2.9
-  - Change the condition of `constexpr`
 - 2025/01/02 ver 1.2.8
   - Improve performance
   - Suppress warnings
