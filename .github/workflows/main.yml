@@ -29,7 +29,7 @@ jobs:
       - name: Install g++${{ matrix.gcc }}
         run: sudo apt-get install g++-${{ matrix.gcc }}
       - name: Run build on C++${{ matrix.cpp }}
-        run: g++-${{ matrix.gcc }} -std=c++${{ matrix.cpp }} -Wall -Wextra -O3 -march=native -fconstexpr-depth=2147483647 -fconstexpr-loop-limit=2147483647 -fconstexpr-ops-limit=2147483647 -I. -o ./tests/tests-gcc-${{ matrix.gcc }}-${{ matrix.cpp }}.out ./tests/tests.cpp
+        run: g++-${{ matrix.gcc }} -std=c++${{ matrix.cpp }} -Wall -Wextra -O3 -march=native -I. -o ./tests/tests-gcc-${{ matrix.gcc }}-${{ matrix.cpp }}.out ./tests/tests.cpp
       - name: Run tests
         run: ./tests/tests-gcc-${{matrix.gcc}}-${{ matrix.cpp }}.out
 
