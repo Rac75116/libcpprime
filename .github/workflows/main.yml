@@ -2,7 +2,6 @@ name: Test
 
 on:
   push:
-  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -64,7 +63,7 @@ jobs:
       - name: Install g++${{ matrix.gcc }}
         run: sudo apt install g++-${{ matrix.gcc }}
       - name: Run build on C++${{ matrix.cpp }}
-        run: g++-${{ matrix.gcc }} -std=c++${{ matrix.cpp }} -Wall -Wextra -O3 -march=native -I. -o ./tests/tests-gcc-${{ matrix.gcc }}-${{ matrix.cpp }}.out ./tests/tests.cpp
+        run: g++-${{ matrix.gcc }} -std=c++${{ matrix.cpp }} -Wall -Wextra -O3 -march=native -fconstexpr-depth=2147483647 -fconstexpr-loop-limit=2147483647 -fconstexpr-ops-limit=2147483647 -I. -o ./tests/tests-gcc-${{ matrix.gcc }}-${{ matrix.cpp }}.out ./tests/tests.cpp
       - name: Run tests
         run: ./tests/tests-gcc-${{matrix.gcc}}-${{ matrix.cpp }}.out
 
@@ -83,6 +82,6 @@ jobs:
       - name: Install clang++${{ matrix.clang }}
         run: sudo apt install clang-${{ matrix.clang }}
       - name: Run build on C++20
-        run: clang++-${{ matrix.clang }} -std=c++2a -Wall -Wextra -O3 -march=native -I. -o ./tests/tests-clang-${{ matrix.clang }}.out ./tests/tests.cpp
+        run: clang++-${{ matrix.clang }} -std=c++2a -Wall -Wextra -O3 -march=native -fconstexpr-depth=2147483647 -fconstexpr-steps=2147483647 -I. -o ./tests/tests-clang-${{ matrix.clang }}.out ./tests/tests.cpp
       - name: Run tests
         run: ./tests/tests-clang-${{ matrix.clang }}.out
