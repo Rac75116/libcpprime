@@ -2,6 +2,7 @@
 #include <libcpprime/IsPrimeNoTable.hpp>
 #include <fstream>
 #include <iostream>
+#include "tests/constexpr_tests.cpp"
 int main() {
     {
         std::ifstream ifs("./tests/Primes.txt");
