@@ -26,7 +26,7 @@
 #ifndef LIBCPPRIME_INCLUDED_IS_PRIME_NO_TABLE
 #define LIBCPPRIME_INCLUDED_IS_PRIME_NO_TABLE
 
-#include <libcpprime/internal/IsPrimeCommon.hpp>
+#include "./internal/IsPrimeCommon.hpp"
 
 namespace cppr {
 

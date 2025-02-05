@@ -44,7 +44,7 @@
 #ifndef LIBCPPRIME_INCLUDED_IS_PRIME
 #define LIBCPPRIME_INCLUDED_IS_PRIME
 
-#include <libcpprime/internal/IsPrimeCommon.hpp>
+#include "./internal/IsPrimeCommon.hpp"
 
 namespace cppr {
 
