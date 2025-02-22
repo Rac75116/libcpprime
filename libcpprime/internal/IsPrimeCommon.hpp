@@ -1,9 +1,9 @@
 /**
- * libcpprime https://github.com/sortA0329/libcpprime
+ * libcpprime internal/IsPrimeCommon.hpp https://github.com/Rac75116/libcpprime
  * 
  * MIT License
  *
- * Copyright (c) 2024 Rac
+ * Copyright (c) 2025 Rac75116
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -233,7 +233,7 @@ namespace internal {
         return { res, cur };
 #endif
     }
-    LIBCPPRIME_CONSTEXPR std::uint32_t GCD32(std::uint32_t x, std::uint32_t y) noexcept {
+    template<class T> LIBCPPRIME_CONSTEXPR T GCD(T x, T y) noexcept {
         if (x == 0) return 0;
         const std::int32_t n = CountrZero(x);
         const std::int32_t m = CountrZero(y);
@@ -241,11 +241,11 @@ namespace internal {
         x >>= n;
         y >>= m;
         while (x != y) {
-            const std::uint32_t a = y - x, b = x - y;
+            const T a = y - x, b = x - y;
             const std::int32_t p = CountrZero(a), q = CountrZero(b);
             Assume(p == q);
-            const std::uint32_t s = y < x ? b : a;
-            const std::uint32_t t = x < y ? x : y;
+            const T s = y < x ? b : a;
+            const T t = x < y ? x : y;
             x = s >> p;
             y = t;
         }
@@ -292,6 +292,16 @@ namespace internal {
         LIBCPPRIME_CONSTEXPR std::uint64_t raw(std::uint64_t x) const noexcept {
             Assume(x < mod_);
             return reduce(x, rs);
+        }
+        LIBCPPRIME_CONSTEXPR std::uint64_t val(std::uint64_t x) const noexcept {
+            if LIBCPPRIME_IF_CONSTEXPR (Strict) {
+                Assume(x < mod_);
+                return reduce(x);
+            } else {
+                Assume(x < 2 * mod_);
+                std::uint64_t tmp = reduce(x);
+                return tmp - mod_ * (tmp >= mod_);
+            }
         }
         LIBCPPRIME_CONSTEXPR std::uint64_t one() const noexcept {
             if LIBCPPRIME_IF_CONSTEXPR (Strict) {
@@ -370,13 +380,13 @@ namespace internal {
         if (x < 85849) {
             const std::uint32_t a = static_cast<std::uint32_t>(Divu128(272518712866683587ull % x, 10755835586592736005ull, x).low);
             if (a == 0) return false;
-            if (x < 11881) return GCD32(a, x) == 1;
+            if (x < 11881) return GCD(a, x) == 1;
             const std::uint32_t b = static_cast<std::uint32_t>(Divu128(827936745744686818ull % x, 10132550402535125089ull, x).low);
             if (b == 0) return false;
-            if (x < 39601) return GCD32((a * b) % x, x) == 1;
+            if (x < 39601) return GCD((a * b) % x, x) == 1;
             const std::uint32_t c = static_cast<std::uint32_t>(Divu128(9647383993136055606ull % x, 17068348107132031867ull, x).low * a * b % x);
             if (c == 0) return false;
-            return GCD32(c, x) == 1;
+            return GCD(c, x) == 1;
         }
         const std::uint32_t h = x * 0xad625b89;
         std::uint32_t d = x - 1;
