@@ -152,7 +152,7 @@ namespace internal {
     }
     LIBCPPRIME_CONSTEXPR Int64Pair Mulu128(std::uint64_t muler, std::uint64_t mulnd) noexcept {
 #if defined(__SIZEOF_INT128__)
-        __uint128_t tmp = static_cast<__uint128_t>(muler) * mulnd;
+        unsigned __int128 tmp = static_cast<unsigned __int128>(muler) * mulnd;
         return { static_cast<std::uint64_t>(tmp >> 64), static_cast<std::uint64_t>(tmp) };
 #else
 #if defined(_MSC_VER)
@@ -165,24 +165,25 @@ namespace internal {
             return { high, low };
         }
 #endif
-        std::uint64_t u1 = (muler & 0xffffffff);
-        std::uint64_t v1 = (mulnd & 0xffffffff);
-        std::uint64_t t = (u1 * v1);
-        std::uint64_t w3 = (t & 0xffffffff);
-        std::uint64_t k = (t >> 32);
-        muler >>= 32;
-        t = (muler * v1) + k;
-        k = (t & 0xffffffff);
-        std::uint64_t w1 = (t >> 32);
-        mulnd >>= 32;
-        t = (u1 * mulnd) + k;
-        k = (t >> 32);
-        return { (muler * mulnd) + w1 + k, (t << 32) + w3 };
+        std::uint64_t lhigh = muler >> 32;
+        std::uint64_t llow = muler & 0xffffffff;
+        std::uint64_t rhigh = mulnd >> 32;
+        std::uint64_t rlow = mulnd & 0xffffffff;
+        std::uint64_t mhh = lhigh * rhigh;
+        std::uint64_t mll = llow * rlow;
+        std::uint64_t mlh = llow * rhigh;
+        std::uint64_t mhl = lhigh * rlow;
+        std::uint64_t ma = mlh + mhl;
+        mhh += ma >> 32;
+        std::uint64_t rl = mll + (ma << 32);
+        mhh += std::uint64_t(ma < mlh) << 32;
+        mhh += rl < mll;
+        return { mhh, rl };
 #endif
     }
     LIBCPPRIME_CONSTEXPR std::uint64_t Mulu128High(std::uint64_t muler, std::uint64_t mulnd) noexcept {
 #if defined(__SIZEOF_INT128__)
-        return static_cast<std::uint64_t>((static_cast<__uint128_t>(muler) * mulnd) >> 64);
+        return static_cast<std::uint64_t>((static_cast<unsigned __int128>(muler) * mulnd) >> 64);
 #else
 #if defined(_MSC_VER)
 #ifdef __cpp_lib_is_constant_evaluated
@@ -216,9 +217,9 @@ namespace internal {
         }
 #endif
 #if defined(__SIZEOF_INT128__)
-        __uint128_t n = (static_cast<__uint128_t>(high) << 64 | low);
-        __uint128_t res = n / div;
-        return { static_cast<std::uint64_t>(res), static_cast<std::uint64_t>(n - res * div) };
+        unsigned __int128 n = (static_cast<unsigned __int128>(high) << 64 | low);
+        std::uint64_t res = static_cast<std::uint64_t>(n / div);
+        return { res, low - res * div };
 #else
         std::uint64_t res = 0;
         std::uint64_t cur = high;
