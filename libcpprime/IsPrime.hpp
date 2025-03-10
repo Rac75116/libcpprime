@@ -1,9 +1,9 @@
 /**
- * libcpprime https://github.com/sortA0329/libcpprime
+ * libcpprime IsPrime.hpp https://github.com/Rac75116/libcpprime
  * 
  * MIT License
  *
- * Copyright (c) 2024 Rac
+ * Copyright (c) 2025 Rac75116
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,10 +41,11 @@
  * Primality testing using a hash table of bases originated with Steven Worley.
  * 
 **/
+
+#include "./internal/IsPrimeCommon.hpp"
+
 #ifndef LIBCPPRIME_INCLUDED_IS_PRIME
 #define LIBCPPRIME_INCLUDED_IS_PRIME
-
-#include <libcpprime/internal/IsPrimeCommon.hpp>
 
 namespace cppr {
 

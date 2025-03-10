@@ -55,8 +55,8 @@ int main() {
 
 # Requirements
 
-- C++11
-- Any compiler that supports C++11
+-   C++11
+-   Any compiler that supports C++11
 
 # Compilation
 
@@ -78,34 +78,38 @@ g++ -I ./libcpprime -O3 Main.cpp
 
 # Releases
 
-- 2025/01/05 ver 1.2.10
-  - Change the condition of `constexpr`
-- 2025/01/03 ver 1.2.9
-  - Fix a bug
-- 2025/01/02 ver 1.2.8
-  - Improve performance
-  - Suppress warnings
-- 2024/12/31 ver 1.2.7
-  - Improve performance
-- 2024/12/30 ver 1.2.6
-  - Improve performance
-- 2024/12/29 ver 1.2.5
-  - Add copyrights notice
-- 2024/12/28 ver 1.2.4
-  - Improve performance
-- 2024/12/26 ver 1.2.3
-  - Improve performance
-- 2024/12/25 ver 1.2.2
-  - Improve performance
-- 2024/12/23 ver 1.2.1
-  - Improve performance
-- 2024/12/19 ver 1.2.0
-  - Split `cppr::IsPrime` into `cppr::IsPrime` and `cppr::IsPrimeNoTable`
-- 2024/12/19 ver 1.1.2
-  - Fix typo
-- 2024/12/18 ver 1.1.1
-  - Add include guards
-- 2024/12/18 ver 1.1.0
-  - Add `cppr::IsPrime` with a table
-- 2024/12/18 ver 1.0.0
-  - Add `cppr::IsPrime`
+-   2025/03/10 ver 1.2.11
+    -   Change the name on the license
+    -   Change Multiprication Algorithm
+    -   Change Replace `__uint128_t` with `unsigned __int128`
+-   2025/01/05 ver 1.2.10
+    -   Change the condition of `constexpr`
+-   2025/01/03 ver 1.2.9
+    -   Fix a bug
+-   2025/01/02 ver 1.2.8
+    -   Improve performance
+    -   Suppress warnings
+-   2024/12/31 ver 1.2.7
+    -   Improve performance
+-   2024/12/30 ver 1.2.6
+    -   Improve performance
+-   2024/12/29 ver 1.2.5
+    -   Add copyrights notice
+-   2024/12/28 ver 1.2.4
+    -   Improve performance
+-   2024/12/26 ver 1.2.3
+    -   Improve performance
+-   2024/12/25 ver 1.2.2
+    -   Improve performance
+-   2024/12/23 ver 1.2.1
+    -   Improve performance
+-   2024/12/19 ver 1.2.0
+    -   Split `cppr::IsPrime` into `cppr::IsPrime` and `cppr::IsPrimeNoTable`
+-   2024/12/19 ver 1.1.2
+    -   Fix typo
+-   2024/12/18 ver 1.1.1
+    -   Add include guards
+-   2024/12/18 ver 1.1.0
+    -   Add `cppr::IsPrime` with a table
+-   2024/12/18 ver 1.0.0
+    -   Add `cppr::IsPrime`
