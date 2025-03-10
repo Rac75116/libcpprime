@@ -81,7 +81,7 @@ g++ -I ./libcpprime -O3 Main.cpp
 -   2025/03/10 ver 1.2.11
     -   Change the name on the license
     -   Change Multiprication Algorithm
-    -   Change Replace `__uint128_t` with `unsigned __int128`
+    -   Replace `__uint128_t` with `unsigned __int128`
 -   2025/01/05 ver 1.2.10
     -   Change the condition of `constexpr`
 -   2025/01/03 ver 1.2.9
